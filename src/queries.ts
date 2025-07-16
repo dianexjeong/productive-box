@@ -7,10 +7,34 @@ export const userInfoQuery = `
   }
 `;
 
-export const createContributedRepoQuery = (username: string) => `
+export const createContributedRepoQuery = (username: string, privacy: 'PUBLIC' | 'PRIVATE') => `
   query {
     user(login: "${username}") {
-      repositoriesContributedTo(last: 100, includeUserRepositories: true) {
+      repositoriesContributedTo(
+        last: 100,
+        includeUserRepositories: true,
+        privacy: ${privacy}
+      ) {
+        nodes {
+          isFork
+          name
+          owner {
+            login
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const createOwnRepoQuery = (username: string) => `
+  query {
+    user(login: "${username}") {
+      repositories(
+        first: 100,
+        privacy: PRIVATE,
+        ownerAffiliations: OWNER
+      ) {
         nodes {
           isFork
           name
